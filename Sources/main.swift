@@ -787,6 +787,30 @@ if let path = option("--render") {
     exit(0)
 }
 
+// `--hero file.png` draws the picture used on the website: two friends, in three moments.
+if let path = option("--hero") {
+    let image = NSImage(size: NSSize(width: 1600, height: 1000))
+    image.lockFocus()
+    NSGradient(starting: rgb(0.99, 0.95, 0.88), ending: rgb(0.86, 0.93, 0.96))?.draw(in: NSRect(x: 0, y: 0, width: 1600, height: 1000), angle: 70)
+    rgb(1, 1, 1).withAlphaComponent(0.55).setFill(); NSRect(x: 0, y: 0, width: 1600, height: 150).fill()
+    func place(_ scene: Scene, x: CGFloat, y: CGFloat, scale: CGFloat) {
+        guard let ctx = NSGraphicsContext.current?.cgContext else { return }
+        ctx.saveGState(); ctx.translateBy(x: x, y: y); ctx.scaleBy(x: scale, y: scale); drawCat(scene); ctx.restoreGState()
+    }
+    // Working side by side
+    place(Scene(coat: coats[0], pose: .sitting, time: 1), x: 40, y: 150, scale: 2.5)
+    place(Scene(coat: coats[1], pose: .sitting, time: 2, tag: "Mina"), x: 350, y: 150, scale: 2.5)
+    // Playing
+    place(Scene(coat: coats[5], pose: .walking, time: 0.3, running: true), x: 760, y: 520, scale: 2.1)
+    place(Scene(coat: coats[4], pose: .walking, time: 0.12, running: true, yarn: true), x: 1090, y: 520, scale: 2.1)
+    // Asleep together
+    place(Scene(coat: coats[3], pose: .sleeping, time: 1), x: 880, y: 150, scale: 2.5)
+    place(Scene(coat: coats[2], pose: .sleeping, time: 2.2, facingLeft: true), x: 1120, y: 150, scale: 2.5)
+    image.unlockFocus()
+    writePNG(image, to: path)
+    exit(0)
+}
+
 // `--icon file.png` draws the 1024-pixel app icon.
 if let path = option("--icon") {
     let image = NSImage(size: NSSize(width: 1024, height: 1024))
